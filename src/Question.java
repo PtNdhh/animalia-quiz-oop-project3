@@ -13,6 +13,12 @@ public class Question {
         this.answer = answer;
     }
 
+    public Question(String question, String a, String b, String c, String d, String answer) {
+        this.question = question;
+        this.options = List.of(a, b, c, d);
+        this.answer = answer;
+    }
+
     public int getId() {
         return id;
     }

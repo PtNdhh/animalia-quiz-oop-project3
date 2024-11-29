@@ -6,6 +6,13 @@
       "name": "Main",
       "request": "launch",
       "mainClass": "Main",
+      "projectName": "animalia-quiz-oop-project3_d99db80e"
+    },
+    {
+      "type": "java",
+      "name": "Main",
+      "request": "launch",
+      "mainClass": "Main",
       "projectName": "animalia-quiz-oop-project3_9284b0df"
     },
     {
@@ -27,7 +34,9 @@
       "name": "Debug (Classpath)",
       "request": "launch",
       "mainClass": "${file}",
-      "classPaths": ["./libs/gson-2.11.0.jar"]
+      "classPaths": [
+        "./libs/gson-2.11.0.jar"
+      ]
     }
   ]
 }

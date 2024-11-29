@@ -94,8 +94,8 @@ public class Main implements TimerListener {
     }
 
     private void loadQuiz() {
+        quizManager = new QuizManager(); // Pass database connection
         try {
-            quizManager = new QuizManager(connection); // Pass database connection
             if (!quizManager.hasNextQuestion()) {
                 JOptionPane.showMessageDialog(frame, "No questions available in the database.", "Error",
                         JOptionPane.ERROR_MESSAGE);

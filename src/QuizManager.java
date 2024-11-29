@@ -4,9 +4,22 @@ import java.util.List;
 
 public class QuizManager {
     private Connection connection;
+    private static List<Question> questions;
+    private int currentIndex = 0;
 
     public QuizManager(Connection connection) {
         this.connection = connection;
+    }
+
+    public QuizManager() {
+        loadQuestion();
+    }
+
+    private void loadQuestion() {
+        questions = List.of(
+            new Question("What is the capital of France?", "Paris", "Berlin", "Madrid", "Rome", "Paris"),
+            new Question("Which planet is known as the Red Planet?", "Earth", "Mars", "Jupiter", "Venus", "Mars"),
+            new Question("What is the largest ocean on Earth?", "Atlantic", "Indian", "Pacific", "Arctic", "Pacific"));
     }
 
     public List<Question> loadQuestions() {
@@ -36,14 +49,15 @@ public class QuizManager {
         return questions;
     }
 
-    public boolean hasNextQuestion() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'hasNextQuestion'");
+    public Question getNextQuestion() {
+        if (currentIndex < questions.size()) {
+            return questions.get(currentIndex++);
+        }
+        return null;
     }
 
-    public Question getNextQuestion() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getNextQuestion'");
+    public boolean hasNextQuestion() {
+        return currentIndex < questions.size();
     }
 
 }
