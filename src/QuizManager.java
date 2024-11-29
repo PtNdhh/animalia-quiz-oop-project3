@@ -20,7 +20,12 @@ public class QuizManager {
                 new Question("What is the capital of France?", "Paris", "Berlin", "Madrid", "Rome", "Paris"),
                 new Question("Which planet is known as the Red Planet?", "Earth", "Mars", "Jupiter", "Venus", "Mars"),
                 new Question("What is the largest ocean on Earth?", "Atlantic", "Indian", "Pacific", "Arctic",
-                        "Pacific"));
+                        "Pacific"),
+                new Question("Who wrote the play 'Romeo and Juliet'?", "William Shakespeare", "Charles Dickens",
+                        "Jane Austen", "Mark Twain", "William Shakespeare"),
+                new Question("What is the smallest country in the world?", "Vatican City", "Monaco", "Nauru",
+                        "San Marino", "Vatican City"));
+
     }
 
     public List<Question> loadQuestions() {
