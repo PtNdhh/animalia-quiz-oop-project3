@@ -2,7 +2,6 @@ import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
 
-//java main class
 public class Main implements TimerListener {
     private JFrame frame;
     private QuizManager quizManager;
@@ -18,13 +17,13 @@ public class Main implements TimerListener {
 
     private void initDatabase() {
         try {
-            // Konfigurasi database
+            // Database connection configuration
             String url = "jdbc:mysql://localhost:3306/quiz_app";
-            String user = "root"; // Ganti dengan user database Anda
-            String password = ""; // Ganti dengan password database Anda
+            String user = "root"; // Your DB username
+            String password = ""; // Your DB password
 
             connection = DriverManager.getConnection(url, user, password);
-            System.out.println("Connected to database!");
+            System.out.println("Connected to the database!");
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Failed to connect to database!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -39,7 +38,7 @@ public class Main implements TimerListener {
         frame.setLocationRelativeTo(null); // Center window
         frame.setLayout(new BorderLayout());
 
-        // Panel input nama pengguna
+        // Panel to input username
         JPanel startPanel = new JPanel();
         startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.Y_AXIS));
         startPanel.setBackground(new Color(255, 250, 240)); // Light background color
@@ -65,7 +64,7 @@ public class Main implements TimerListener {
                 return;
             }
             saveOrUpdateUser();
-            selectFile();
+            loadQuiz();
         });
 
         startPanel.add(Box.createVerticalStrut(50)); // Add space on top
@@ -82,42 +81,29 @@ public class Main implements TimerListener {
 
     private void saveOrUpdateUser() {
         try {
-            // Masukkan atau perbarui pengguna di database
-            String query = "INSERT INTO leaderboard (username, score) VALUES (?, ?) ON DUPLICATE KEY UPDATE username = username";
+            // Insert or update user in the leaderboard
+            String query = "INSERT INTO leaderboard (username, score) VALUES (?, ?) ON DUPLICATE KEY UPDATE score = ?";
             PreparedStatement stmt = connection.prepareStatement(query);
             stmt.setString(1, username);
-            stmt.setInt(2, 0);
+            stmt.setInt(2, 0); // Starting score
+            stmt.setInt(3, 0); // In case of update, keep score at 0 initially
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private void selectFile() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select Quiz JSON File");
-        int result = fileChooser.showOpenDialog(frame);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-            loadQuiz(filePath);
-        } else {
-            JOptionPane.showMessageDialog(frame, "No file selected. Please select a valid JSON file.", "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void loadQuiz(String filePath) {
+    private void loadQuiz() {
         try {
-            quizManager = new QuizManager(filePath);
+            quizManager = new QuizManager(connection); // Pass database connection
             if (!quizManager.hasNextQuestion()) {
-                JOptionPane.showMessageDialog(frame, "The file is empty or invalid.", "Error",
+                JOptionPane.showMessageDialog(frame, "No questions available in the database.", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
             showNextQuestion();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "Error loading the quiz file. Please check the file format.", "Error",
+            JOptionPane.showMessageDialog(frame, "Error loading the quiz. Please try again.", "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -160,11 +146,11 @@ public class Main implements TimerListener {
         frame.getContentPane().removeAll();
         frame.add(questionPanel, BorderLayout.CENTER);
 
-        // Timer
+        // Timer setup
         if (timerThread != null) {
             timerThread.stopTimer();
         }
-        timerThread = new TimerThread(15, this); // 15 detik untuk setiap soal
+        timerThread = new TimerThread(15, this); // 15 seconds for each question
         timerThread.start();
 
         frame.revalidate();
@@ -185,72 +171,57 @@ public class Main implements TimerListener {
 
     private void showResult() {
         frame.getContentPane().removeAll();
-        JLabel resultLabel = new JLabel("Quiz Complete! Your score: " + score, SwingConstants.CENTER);
-        resultLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        JButton leaderboardButton = new JButton("View Leaderboard");
-        leaderboardButton.setBackground(new Color(34, 193, 195));
-        leaderboardButton.setForeground(Color.WHITE);
-        leaderboardButton.setFont(new Font("Arial", Font.BOLD, 14));
+        JLabel resultLabel = new JLabel("Quiz Complete! Your score: " + score);
+        resultLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        leaderboardButton.addActionListener(e -> showLeaderboard());
+        JPanel resultPanel = new JPanel();
+        resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.Y_AXIS));
+        resultPanel.add(resultLabel);
 
-        frame.add(resultLabel, BorderLayout.CENTER);
-        frame.add(leaderboardButton, BorderLayout.SOUTH);
+        JButton viewLeaderboardButton = new JButton("View Leaderboard");
+        viewLeaderboardButton.addActionListener(e -> showLeaderboard());
+        resultPanel.add(viewLeaderboardButton);
 
+        frame.add(resultPanel);
         frame.revalidate();
         frame.repaint();
     }
 
     private void showLeaderboard() {
-        frame.getContentPane().removeAll();
+        try {
+            String query = "SELECT username, score FROM leaderboard ORDER BY score DESC LIMIT 10";
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
 
-        JPanel leaderboardPanel = new JPanel(new BorderLayout());
-        leaderboardPanel.setBackground(new Color(255, 250, 240));
-
-        JLabel titleLabel = new JLabel("Leaderboard", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-
-        JTextArea leaderboardArea = new JTextArea();
-        leaderboardArea.setEditable(false);
-        leaderboardArea.setFont(new Font("Arial", Font.PLAIN, 14));
-
-        String query = "SELECT username, score FROM leaderboard ORDER BY score DESC";
-        try (Statement stmt = connection.createStatement();
-                ResultSet rs = stmt.executeQuery(query)) {
+            StringBuilder leaderboardText = new StringBuilder("<html><h2>Leaderboard</h2>");
+            int rank = 1;
             while (rs.next()) {
-                String user = rs.getString("username");
-                int userScore = rs.getInt("score");
-                leaderboardArea.append(user + " - " + userScore + " points\n");
+                String username = rs.getString("username");
+                int score = rs.getInt("score");
+                leaderboardText.append(rank++).append(". ").append(username).append(" - ").append(score).append("<br>");
             }
+            leaderboardText.append("</html>");
+
+            JOptionPane.showMessageDialog(frame, leaderboardText.toString(), "Leaderboard",
+                    JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
-        JScrollPane scrollPane = new JScrollPane(leaderboardArea);
-        leaderboardPanel.add(titleLabel, BorderLayout.NORTH);
-        leaderboardPanel.add(scrollPane, BorderLayout.CENTER);
+    public void onTimeOut() {
+        score -= 5; // Deduct points for time out
+        showNextQuestion();
+    }
 
-        JButton backButton = new JButton("Back to Main");
-        backButton.setBackground(new Color(255, 69, 0)); // Back button color
-        backButton.setForeground(Color.WHITE);
-        backButton.setFont(new Font("Arial", Font.BOLD, 14));
-        backButton.addActionListener(e -> frame.dispose());
-
-        leaderboardPanel.add(backButton, BorderLayout.SOUTH);
-
-        frame.add(leaderboardPanel);
-        frame.revalidate();
-        frame.repaint();
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new Main());
     }
 
     @Override
     public void onTimeUp() {
-        SwingUtilities.invokeLater(this::showNextQuestion);
-    }
-
-    /// cobaaa
-    // ngerun
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(Main::new);
+        // This method can be used for additional logic if required
+        throw new UnsupportedOperationException("Unimplemented method 'onTimeUp'");
     }
 }
