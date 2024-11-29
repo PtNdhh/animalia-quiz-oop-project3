@@ -1,5 +1,7 @@
-
 public interface TimerListener {
-    void onTimeUp();
-}
+    void onTimeOut();
 
+    void updateProgressBar(int progress);
+
+    void updateTimerLabel(String text);
+}

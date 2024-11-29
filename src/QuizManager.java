@@ -17,9 +17,10 @@ public class QuizManager {
 
     private void loadQuestion() {
         questions = List.of(
-            new Question("What is the capital of France?", "Paris", "Berlin", "Madrid", "Rome", "Paris"),
-            new Question("Which planet is known as the Red Planet?", "Earth", "Mars", "Jupiter", "Venus", "Mars"),
-            new Question("What is the largest ocean on Earth?", "Atlantic", "Indian", "Pacific", "Arctic", "Pacific"));
+                new Question("What is the capital of France?", "Paris", "Berlin", "Madrid", "Rome", "Paris"),
+                new Question("Which planet is known as the Red Planet?", "Earth", "Mars", "Jupiter", "Venus", "Mars"),
+                new Question("What is the largest ocean on Earth?", "Atlantic", "Indian", "Pacific", "Arctic",
+                        "Pacific"));
     }
 
     public List<Question> loadQuestions() {

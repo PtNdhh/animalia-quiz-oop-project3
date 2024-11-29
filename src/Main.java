@@ -9,6 +9,8 @@ public class Main implements TimerListener {
     private int score = 0;
     private String username;
     private Connection connection;
+    private JProgressBar progressBar; // Progress bar for countdown
+    private JLabel timerLabel; // To display remaining time
 
     public Main() {
         initDatabase();
@@ -110,8 +112,8 @@ public class Main implements TimerListener {
 
     private void showNextQuestion() {
         if (!quizManager.hasNextQuestion()) {
-            updateScoreInDatabase();
-            showResult();
+            updateScoreInDatabase(); // Memperbarui skor ke database setelah kuis selesai
+            showResult(); // Tampilkan hasil akhir
             return;
         }
 
@@ -127,30 +129,51 @@ public class Main implements TimerListener {
         JPanel optionsPanel = new JPanel(new GridLayout(2, 2, 10, 10)); // Adjust grid spacing
         ButtonGroup buttonGroup = new ButtonGroup();
 
+        // Add option buttons and handle answers
         for (String option : question.getOptions()) {
             JRadioButton optionButton = new JRadioButton(option);
             buttonGroup.add(optionButton);
             optionsPanel.add(optionButton);
 
             optionButton.addActionListener(e -> {
-                if (option.equals(question.getAnswer())) {
-                    score += 10;
+                boolean isCorrect = option.equals(question.getAnswer());
+                if (isCorrect) {
+                    score += 15;
+                    System.out.println("Correct! Current score: " + score); // Debugging line to check score
                 }
-                timerThread.stopTimer();
-                showNextQuestion();
+                timerThread.stopTimer(); // Stop the timer when an answer is selected
             });
         }
 
         questionPanel.add(optionsPanel, BorderLayout.CENTER);
 
+        // Panel for timer and progress bar
+        JPanel timerPanel = new JPanel(new BorderLayout());
+        timerPanel.setBackground(new Color(200, 200, 200));
+
+        // Timer label
+        timerLabel = new JLabel("Time Left: 15s");
+        timerLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        timerPanel.add(timerLabel, BorderLayout.CENTER);
+
+        // Move progress bar to the bottom
+        progressBar = new JProgressBar(0, 100);
+        progressBar.setValue(100);
+        progressBar.setStringPainted(false); // Remove percentage display
+        progressBar.setForeground(Color.GREEN);
+
         frame.getContentPane().removeAll();
+        frame.add(timerPanel, BorderLayout.NORTH);
         frame.add(questionPanel, BorderLayout.CENTER);
+        frame.add(progressBar, BorderLayout.SOUTH); // Add progress bar to the bottom
 
         // Timer setup
         if (timerThread != null) {
             timerThread.stopTimer();
         }
-        timerThread = new TimerThread(15, this); // 15 seconds for each question
+        timerThread = new TimerThread(10, this); // 15 seconds for each question
         timerThread.start();
 
         frame.revalidate();
@@ -159,10 +182,11 @@ public class Main implements TimerListener {
 
     private void updateScoreInDatabase() {
         try {
+            // Update the score in the database after the quiz
             String query = "UPDATE leaderboard SET score = ? WHERE username = ?";
             PreparedStatement stmt = connection.prepareStatement(query);
-            stmt.setInt(1, score);
-            stmt.setString(2, username);
+            stmt.setInt(1, score); // Update with the final score
+            stmt.setString(2, username); // Match by username
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -215,13 +239,17 @@ public class Main implements TimerListener {
         showNextQuestion();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Main());
+    @Override
+    public void updateProgressBar(int progress) {
+        progressBar.setValue(progress); // Update progress bar value
     }
 
     @Override
-    public void onTimeUp() {
-        // This method can be used for additional logic if required
-        throw new UnsupportedOperationException("Unimplemented method 'onTimeUp'");
+    public void updateTimerLabel(String text) {
+        timerLabel.setText(text); // Update timer label
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new Main());
     }
 }

@@ -1,32 +1,36 @@
+import javax.swing.SwingUtilities;
 
 public class TimerThread extends Thread {
-    private int timeLeft; // Waktu dalam detik
-    private boolean running = true;
+    private int seconds;
     private TimerListener listener;
+    private boolean isRunning = true;
 
-    public TimerThread(int time, TimerListener listener) {
-        this.timeLeft = time;
+    public TimerThread(int seconds, TimerListener listener) {
+        this.seconds = seconds;
         this.listener = listener;
-    }
-
-    public void stopTimer() {
-        running = false;
     }
 
     @Override
     public void run() {
-        while (timeLeft > 0 && running) {
-            try {
-                Thread.sleep(1000); // Tunggu 1 detik
-                timeLeft--;
-                System.out.println("Time left: " + timeLeft + " seconds");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        try {
+            for (int i = seconds; i > 0; i--) {
+                if (!isRunning)
+                    break;
+                final int remainingTime = i;
+                SwingUtilities.invokeLater(() -> {
+                    int progress = (int) ((double) remainingTime / seconds * 100);
+                    listener.updateProgressBar(progress);
+                    listener.updateTimerLabel("Time Left: " + remainingTime + "s");
+                });
+                Thread.sleep(1000);
             }
+            listener.onTimeOut();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+    }
 
-        if (timeLeft == 0 && listener != null) {
-            listener.onTimeUp(); // Panggil metode dari interface
-        }
+    public void stopTimer() {
+        isRunning = false;
     }
 }
