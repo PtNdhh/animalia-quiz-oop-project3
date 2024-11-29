@@ -1,8 +1,8 @@
 import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
-import java.awt.event.*;
 
+//java main class
 public class Main implements TimerListener {
     private JFrame frame;
     private QuizManager quizManager;
