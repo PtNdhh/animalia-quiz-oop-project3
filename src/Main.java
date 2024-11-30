@@ -214,6 +214,7 @@ public class Main implements TimerListener {
                     score += 15;
                     System.out.println("Correct! Current score: " + score); // Debugging line to check score
                 }
+                // score += 5;
                 timerThread.stopTimer(); // Stop the timer when an answer is selected
             });
         }
@@ -334,7 +335,7 @@ public class Main implements TimerListener {
     }
 
     public void onTimeOut() {
-        score -= 5; // Deduct points for time out
+        // score -= 5; // Deduct points for time out
         showNextQuestion();
     }
 
