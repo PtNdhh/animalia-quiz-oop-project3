@@ -1,10 +1,9 @@
 import java.awt.*;
-import java.sql.*;
-import javax.swing.*;
-import javax.sound.sampled.*;
-import java.io.*;
 import java.awt.event.*;
-
+import java.io.*;
+import java.sql.*;
+import javax.sound.sampled.*;
+import javax.swing.*;
 
 public class Main implements TimerListener {
     private JFrame frame;
@@ -39,92 +38,109 @@ public class Main implements TimerListener {
     }
 
     private void initGUI() {
-    frame = new JFrame("Quiz App");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setSize(1000, 600);
-    frame.setLocationRelativeTo(null); // Center window
-    frame.setLayout(new BorderLayout());
+        frame = new JFrame("Quiz App");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1000, 600);
+        frame.setLocationRelativeTo(null); // Center window
+        frame.setLayout(new BorderLayout());
 
-    JLayeredPane layeredPane = new JLayeredPane();
-    frame.add(layeredPane);
+        // Panel for the background
+        JPanel backgroundPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                // Draw the background image
+                ImageIcon startBg = new ImageIcon(
+                        new ImageIcon("assets\\startBG.png")
+                                .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
+                g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
+            }
+        };
+        backgroundPanel.setLayout(new BorderLayout());
+        backgroundPanel.setOpaque(false); // Make panel transparent for the background image
 
-        // Panel to input username (Panel yang akan muncul setelah startButton_1 ditekan)
-    JPanel startPanel = new JPanel();
-    startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.Y_AXIS));
-    startPanel.setBackground(new Color(255, 250, 240)); // Light background color
+        // Start button panel
+        JPanel startButtonPanel = new JPanel();
+        startButtonPanel.setOpaque(false); // Make this panel transparent as well
+        startButtonPanel.setLayout(new GridBagLayout()); // Use GridBagLayout for centering
 
-    // Menambahkan komponen-komponen ke dalam startPanel
-    JLabel nameLabel = new JLabel("Enter your name:");
-    nameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-    nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Start button
+        // Start button
+        ImageIcon startBt = new ImageIcon(
+                new ImageIcon("assets\\startBT.png")
+                        .getImage().getScaledInstance(200, 120, Image.SCALE_SMOOTH));
+        JButton startButton_1 = new JButton(startBt);
+        startButton_1.setFocusable(false);
+        startButton_1.setOpaque(false);
+        startButton_1.setContentAreaFilled(false);
+        startButton_1.setBorderPainted(false); // Remove border around the button
 
-    JTextField nameField = new JTextField();
-    nameField.setMaximumSize(new Dimension(300, 30)); // Max width for name input
+        // Add action listener to the start button
+        startButton_1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Switch to start panel when start button is clicked
+                initStartPanel();
+            }
+        });
 
-    JButton startButton = new JButton("Start Quiz");
-    startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-    startButton.setBackground(new Color(34, 193, 195)); // Attractive color
-    startButton.setForeground(Color.WHITE);
-    startButton.setFont(new Font("Arial", Font.BOLD, 14));
-    startButton.setFocusPainted(false);
+        // Create GridBagConstraints to center the button
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.CENTER; // Center the button
+        startButtonPanel.add(startButton_1, gbc); // Add the start button to the panel
 
-    startButton.addActionListener(e -> {
-        username = nameField.getText().trim();
-        if (username.isEmpty()) {
-            JOptionPane.showMessageDialog(frame, "Name cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        saveOrUpdateUser();
-        loadQuiz();
-    });
+        // Add the start button panel to the background panel
+        backgroundPanel.add(startButtonPanel, BorderLayout.CENTER);
+        frame.add(backgroundPanel);
 
-    // Menambahkan komponen ke dalam startPanel
-    startPanel.add(Box.createVerticalStrut(50)); // Add space on top
-    startPanel.add(nameLabel);
-    startPanel.add(Box.createVerticalStrut(20)); // Add space between name label and text field
-    startPanel.add(nameField);
-    startPanel.add(Box.createVerticalStrut(20)); // Add space between input and button
-    startPanel.add(startButton);
-    startPanel.add(Box.createVerticalStrut(50)); // Add space at the bottom
-
-    // Menambahkan gambar latar belakang pada panel utama
-    ImageIcon startBg = new ImageIcon(new ImageIcon("C:/Users/LENOVO/Music/animalquiz/animalia-quiz-oop-project3/assets/startBG.png").getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
-    JPanel panel = new JPanel() {
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            // Menggambar gambar latar belakang di panel
-            g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
-        }
-    };
-    panel.setLayout(new BorderLayout());
-    panel.setOpaque(false);  // Membuat panel transparan agar gambar latar belakang terlihat
-
-    // Menambahkan tombol untuk memulai kuis
-    ImageIcon startBt = new ImageIcon(new ImageIcon("C:/Users/LENOVO/Music/animalquiz/animalia-quiz-oop-project3/assets/startBT.png").getImage().getScaledInstance(200, 120, Image.SCALE_SMOOTH));
-    JButton startButton_1 = new JButton(startBt);
-    startButton_1.setFocusable(false);
-    startButton_1.setOpaque(false);
-    startButton_1.setContentAreaFilled(false);
-
-    // Ketika startButton_1 ditekan, ganti panel ke startPanel
-    startButton_1.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            frame.getContentPane().removeAll();  // Menghapus panel lama
-            frame.add(startPanel);  // Menambahkan startPanel ke frame
-            frame.revalidate();  // Memperbarui layout
-            frame.repaint();  // Memperbarui tampilan frame
-        }
-    });
-
-    // Menambahkan tombol ke panel dengan layout di tengah
-    panel.add(startButton_1, BorderLayout.CENTER);
-
-    // Menambahkan panel ke frame
-    frame.add(panel);
-    frame.setVisible(true);
+        frame.setVisible(true);
     }
 
+    private void initStartPanel() {
+        // Create start panel for user input
+        JPanel startPanel = new JPanel();
+        startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.Y_AXIS));
+        startPanel.setBackground(new Color(255, 250, 240)); // Light background color
+
+        JLabel nameLabel = new JLabel("Enter your name:");
+        nameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JTextField nameField = new JTextField();
+        nameField.setMaximumSize(new Dimension(300, 30)); // Max width for name input
+
+        JButton startButton = new JButton("Start Quiz");
+        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        startButton.setBackground(new Color(34, 193, 195)); // Attractive color
+        startButton.setForeground(Color.WHITE);
+        startButton.setFont(new Font("Arial", Font.BOLD, 14));
+        startButton.setFocusPainted(false);
+
+        // Add action listener for the start quiz button
+        startButton.addActionListener(e -> {
+            username = nameField.getText().trim();
+            if (username.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Name cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            saveOrUpdateUser();
+            loadQuiz();
+        });
+
+        // Add components to start panel
+        startPanel.add(Box.createVerticalStrut(50)); // Add space on top
+        startPanel.add(nameLabel);
+        startPanel.add(Box.createVerticalStrut(20)); // Space between label and text field
+        startPanel.add(nameField);
+        startPanel.add(Box.createVerticalStrut(20)); // Space between input and button
+        startPanel.add(startButton);
+        startPanel.add(Box.createVerticalStrut(50)); // Space at the bottom
+
+        // Switch to start panel
+        frame.getContentPane().removeAll(); // Remove previous components
+        frame.add(startPanel); // Add the start panel
+        frame.revalidate(); // Refresh layout
+        frame.repaint(); // Refresh frame
+    }
 
     private void saveOrUpdateUser() {
         try {
@@ -175,8 +191,8 @@ public class Main implements TimerListener {
         JPanel optionsPanel = new JPanel(new GridLayout(2, 2, 10, 10)); // Adjust grid spacing
         ButtonGroup buttonGroup = new ButtonGroup();
 
-        String[] colors = {"#FF5733", "#FFC300", "#33B5FF", "#28A745"}; // Red, Yellow, Blue, Green
-        int colorIndex = 0;    
+        String[] colors = { "#FF5733", "#FFC300", "#33B5FF", "#28A745" }; // Red, Yellow, Blue, Green
+        int colorIndex = 0;
 
         // Add option buttons and handle answers
         for (String option : question.getOptions()) {
@@ -232,7 +248,7 @@ public class Main implements TimerListener {
         }
         timerThread = new TimerThread(10, this); // 15 seconds for each question
         timerThread.start();
-        playMusic("C:/Users/LENOVO/Music/animalquiz/animalia-quiz-oop-project3/assets/song.wav");
+        playMusic("assets\\song.wav");
 
         frame.revalidate();
         frame.repaint();
