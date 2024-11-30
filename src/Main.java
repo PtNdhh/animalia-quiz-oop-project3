@@ -267,6 +267,9 @@ public class Main implements TimerListener {
     }
 
     private void showResult() {
+
+        stopMusic();
+
         frame.getContentPane().removeAll();
         JLabel resultLabel = new JLabel("Quiz Complete! Your score: " + score);
         resultLabel.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -283,6 +286,13 @@ public class Main implements TimerListener {
         frame.add(resultPanel);
         frame.revalidate();
         frame.repaint();
+    }
+
+    private void stopMusic() {
+        // Stop the clip if it is playing
+        if (clip != null && clip.isRunning()) {
+            clip.stop();
+        }
     }
 
     private void showLeaderboard() {
