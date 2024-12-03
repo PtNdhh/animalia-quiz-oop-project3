@@ -284,26 +284,62 @@ public class Main implements TimerListener {
     }
 
     private void showResult() {
-
         stopMusic();
-
+    
+        // Bersihkan konten frame
         frame.getContentPane().removeAll();
-        JLabel resultLabel = new JLabel("Quiz Complete! Your score: " + score);
-        resultLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        JPanel resultPanel = new JPanel();
+    
+        // Panel utama untuk hasil
+        JPanel resultPanel =  new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                // Draw the background image
+                ImageIcon startBg = new ImageIcon(
+                        new ImageIcon("assets\\BGResult.jpg")
+                                .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
+                g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
+            }
+        };
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.Y_AXIS));
-        resultPanel.add(resultLabel);
-
+        resultPanel.setBackground(Color.WHITE);
+    
+        // Label untuk pesan hasil
+        JLabel messageLabel = new JLabel("Bravo! You have Scored");
+        messageLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        messageLabel.setForeground(Color.BLACK);
+        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
+        // Label untuk skor
+        JLabel scoreLabel = new JLabel(String.valueOf(score));
+        scoreLabel.setFont(new Font("Arial", Font.BOLD, 80));
+        scoreLabel.setForeground(Color.BLACK);
+        scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
+        // Tombol untuk melihat leaderboard
         JButton viewLeaderboardButton = new JButton("View Leaderboard");
+        viewLeaderboardButton.setFont(new Font("Arial", Font.PLAIN, 16));
+        viewLeaderboardButton.setBackground(new Color(203, 132, 66)); // Warna coklat seperti pada gambar
+        viewLeaderboardButton.setForeground(Color.WHITE);
+        viewLeaderboardButton.setFocusPainted(false);
+        viewLeaderboardButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        viewLeaderboardButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         viewLeaderboardButton.addActionListener(e -> showLeaderboard());
+    
+        // Tambahkan komponen ke panel
+        resultPanel.add(Box.createRigidArea(new Dimension(0, 50))); // Spasi atas
+        resultPanel.add(messageLabel);
+        resultPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spasi antar komponen
+        resultPanel.add(scoreLabel);
+        resultPanel.add(Box.createRigidArea(new Dimension(0, 30))); // Spasi antar komponen
         resultPanel.add(viewLeaderboardButton);
-
-        frame.add(resultPanel);
+    
+        // Tambahkan panel ke frame
+        frame.add(resultPanel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
     }
+    
 
     private void stopMusic() {
         // Stop the clip if it is playing
