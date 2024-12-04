@@ -51,7 +51,7 @@ public class Main implements TimerListener {
                 super.paintComponent(g);
                 // Draw the background image
                 ImageIcon startBg = new ImageIcon(
-                        new ImageIcon("assets\\startBG.png")
+                        new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\startBG.png")
                                 .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
                 g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
@@ -67,7 +67,7 @@ public class Main implements TimerListener {
         // Start button
         // Start button
         ImageIcon startBt = new ImageIcon(
-                new ImageIcon("assets\\startBT.png")
+                new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\startBT.png")
                         .getImage().getScaledInstance(200, 120, Image.SCALE_SMOOTH));
         JButton startButton_1 = new JButton(startBt);
         startButton_1.setFocusable(false);
@@ -103,7 +103,7 @@ public class Main implements TimerListener {
                 super.paintComponent(g);
                 // Draw the background image for the "Enter your name" panel
                 ImageIcon startBg = new ImageIcon(
-                        new ImageIcon("assets\\BGResult.jpg") // Specify your background image here
+                        new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\BGResult.jpg") // Specify your background image here
                                 .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
                 g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
@@ -193,50 +193,74 @@ public class Main implements TimerListener {
         JPanel questionPanel = new JPanel(new BorderLayout());
         questionPanel.setBackground(new Color(255, 250, 240)); // Set background color for questions
         JLabel questionLabel = new JLabel(question.getQuestion());
-        questionLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        questionLabel.setFont(new Font("Arial", Font.BOLD, 28));
         questionLabel.setForeground(Color.decode("#3C928E"));
         questionLabel.setHorizontalAlignment(SwingConstants.CENTER);
         questionPanel.add(questionLabel, BorderLayout.NORTH);
 
         JPanel optionsPanel = new JPanel(new GridLayout(2, 2, 10, 10)); // Adjust grid spacing
-        ButtonGroup buttonGroup = new ButtonGroup();
+        
 
         String[] colors = { "#FF5733", "#FFC300", "#33B5FF", "#28A745" }; // Red, Yellow, Blue, Green
         int colorIndex = 0;
 
         // Add option buttons and handle answers
         for (String option : question.getOptions()) {
-            JRadioButton optionButton = new JRadioButton(option);
-            buttonGroup.add(optionButton);
-            optionsPanel.add(optionButton);
-
-            optionButton.setBackground(Color.decode(colors[colorIndex]));
+            JPanel optionButton = new JPanel(new GridBagLayout());
+            Color originalColor = Color.decode(colors[colorIndex]);
+            optionButton.setBackground(originalColor);
             optionButton.setOpaque(true);
 
-            optionsPanel.add(optionButton);
+            JLabel optionLabel = new JLabel(option);
+            optionLabel.setFont(new Font("Arial", Font.BOLD, 40));
+            optionLabel.setForeground(Color.BLACK);
 
+            optionButton.add(optionLabel);
+            
+            optionButton.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    // Mengubah warna menjadi lebih gelap ketika panel diklik
+                    optionButton.setBackground(originalColor.darker());
+
+                    // Periksa apakah jawaban benar
+                    boolean isCorrect = option.equals(question.getAnswer());
+                    if (isCorrect) {
+                        score += 15;
+                        System.out.println("Correct! Current score: " + score); // Debugging line to check score
+                        JOptionPane.showMessageDialog(optionsPanel, "Kamu Benar!", "Jawaban", JOptionPane.INFORMATION_MESSAGE);
+                    }else{
+                        JOptionPane.showMessageDialog(optionsPanel, "Kamu Salah! Jawaban yang benar: " + question.getAnswer(), "Jawaban", JOptionPane.ERROR_MESSAGE);
+                    }
+                    timerThread.stopTimer(); // Stop the timer when an answer is selected
+                }
+    
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    // Mengubah warna menjadi sedikit lebih terang saat mouse berada di atas panel
+                    optionButton.setBackground(originalColor.brighter());
+                }
+    
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    // Mengembalikan warna panel ke warna semula saat mouse keluar
+                    optionButton.setBackground(originalColor);
+                }
+            });
+            optionsPanel.add(optionButton);
             // Update the color index for the next option
             colorIndex = (colorIndex + 1) % colors.length;
-
-            optionButton.addActionListener(e -> {
-                boolean isCorrect = option.equals(question.getAnswer());
-                if (isCorrect) {
-                    score += 15;
-                    System.out.println("Correct! Current score: " + score); // Debugging line to check score
-                }
-                // score += 5;
-                timerThread.stopTimer(); // Stop the timer when an answer is selected
-            });
         }
 
         questionPanel.add(optionsPanel, BorderLayout.CENTER);
+
 
         // Panel for timer and progress bar
         JPanel timerPanel = new JPanel(new BorderLayout());
         timerPanel.setBackground(new Color(200, 200, 200));
 
         // Timer label
-        timerLabel = new JLabel("Time Left: 15s");
+        timerLabel = new JLabel("Time Left: 10s");
         timerLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -259,7 +283,7 @@ public class Main implements TimerListener {
         }
         timerThread = new TimerThread(10, this); // 15 seconds for each question
         timerThread.start();
-        playMusic("assets\\song.wav");
+        playMusic("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\song.wav");
 
         frame.revalidate();
         frame.repaint();
@@ -306,7 +330,7 @@ public class Main implements TimerListener {
                 super.paintComponent(g);
                 // Draw the background image
                 ImageIcon startBg = new ImageIcon(
-                        new ImageIcon("assets\\BGResult.jpg")
+                        new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\BGResult.jpg")
                                 .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
                 g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
