@@ -97,9 +97,19 @@ public class Main implements TimerListener {
 
     private void initStartPanel() {
         // Create start panel for user input
-        JPanel startPanel = new JPanel();
+        JPanel startPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                // Draw the background image for the "Enter your name" panel
+                ImageIcon startBg = new ImageIcon(
+                        new ImageIcon("assets\\BGResult.jpg") // Specify your background image here
+                                .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
+                g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
+            }
+        };
         startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.Y_AXIS));
-        startPanel.setBackground(new Color(255, 250, 240)); // Light background color
+        startPanel.setOpaque(false); // Make the panel transparent so the background image shows
 
         JLabel nameLabel = new JLabel("Enter your name:");
         nameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -285,12 +295,12 @@ public class Main implements TimerListener {
 
     private void showResult() {
         stopMusic();
-    
+
         // Bersihkan konten frame
         frame.getContentPane().removeAll();
-    
+
         // Panel utama untuk hasil
-        JPanel resultPanel =  new JPanel() {
+        JPanel resultPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -303,19 +313,19 @@ public class Main implements TimerListener {
         };
         resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.Y_AXIS));
         resultPanel.setBackground(Color.WHITE);
-    
+
         // Label untuk pesan hasil
         JLabel messageLabel = new JLabel("Bravo! You have Scored");
         messageLabel.setFont(new Font("Arial", Font.PLAIN, 20));
         messageLabel.setForeground(Color.BLACK);
         messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    
+
         // Label untuk skor
         JLabel scoreLabel = new JLabel(String.valueOf(score));
         scoreLabel.setFont(new Font("Arial", Font.BOLD, 80));
         scoreLabel.setForeground(Color.BLACK);
         scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    
+
         // Tombol untuk melihat leaderboard
         JButton viewLeaderboardButton = new JButton("View Leaderboard");
         viewLeaderboardButton.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -325,7 +335,7 @@ public class Main implements TimerListener {
         viewLeaderboardButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         viewLeaderboardButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         viewLeaderboardButton.addActionListener(e -> showLeaderboard());
-    
+
         // Tambahkan komponen ke panel
         resultPanel.add(Box.createRigidArea(new Dimension(0, 50))); // Spasi atas
         resultPanel.add(messageLabel);
@@ -333,13 +343,12 @@ public class Main implements TimerListener {
         resultPanel.add(scoreLabel);
         resultPanel.add(Box.createRigidArea(new Dimension(0, 30))); // Spasi antar komponen
         resultPanel.add(viewLeaderboardButton);
-    
+
         // Tambahkan panel ke frame
         frame.add(resultPanel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
     }
-    
 
     private void stopMusic() {
         // Stop the clip if it is playing
