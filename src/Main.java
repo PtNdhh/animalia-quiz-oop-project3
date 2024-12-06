@@ -51,7 +51,7 @@ public class Main implements TimerListener {
                 super.paintComponent(g);
                 // Draw the background image
                 ImageIcon startBg = new ImageIcon(
-                        new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\startBG.png")
+                        new ImageIcon("assets\\startBG.png")
                                 .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
                 g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
@@ -67,7 +67,7 @@ public class Main implements TimerListener {
         // Start button
         // Start button
         ImageIcon startBt = new ImageIcon(
-                new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\startBT.png")
+                new ImageIcon("assets\\startBT.png")
                         .getImage().getScaledInstance(200, 120, Image.SCALE_SMOOTH));
         JButton startButton_1 = new JButton(startBt);
         startButton_1.setFocusable(false);
@@ -103,7 +103,7 @@ public class Main implements TimerListener {
                 super.paintComponent(g);
                 // Draw the background image for the "Enter your name" panel
                 ImageIcon startBg = new ImageIcon(
-                        new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\BGResult.jpg") // Specify your background image here
+                        new ImageIcon("assets\\BGResult.jpg") // Specify your background image here
                                 .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
                 g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
@@ -283,7 +283,7 @@ public class Main implements TimerListener {
         }
         timerThread = new TimerThread(10, this); // 15 seconds for each question
         timerThread.start();
-        playMusic("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\song.wav");
+        playMusic("assets\\song.wav");
 
         frame.revalidate();
         frame.repaint();
@@ -330,7 +330,7 @@ public class Main implements TimerListener {
                 super.paintComponent(g);
                 // Draw the background image
                 ImageIcon startBg = new ImageIcon(
-                        new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\BGResult.jpg")
+                        new ImageIcon("assets\\BGResult.jpg")
                                 .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
                 g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
@@ -386,18 +386,86 @@ public class Main implements TimerListener {
             String query = "SELECT username, score FROM leaderboard ORDER BY score DESC LIMIT 10";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
-
-            StringBuilder leaderboardText = new StringBuilder("<html><h2>Leaderboard</h2>");
+    
+            // Bersihkan frame
+            frame.getContentPane().removeAll();
+    
+            // Panel utama
+            JPanel mainPanel = new JPanel();
+            mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+            mainPanel.setBackground(Color.WHITE);
+    
+            // Label judul
+            JLabel titleLabel = new JLabel("LeaderBoard");
+            titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
+            titleLabel.setForeground(new Color(0, 153, 0)); // Hijau
+            titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
+            // Ikon trofi
+            JLabel iconLabel = new JLabel(new ImageIcon("assets\\thropy_icon.png")); // Ganti path sesuai lokasi ikon
+            iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
+            // Panel untuk leaderboard (sebagai konten utama untuk ScrollPane)
+            JPanel leaderboardPanel = new JPanel();
+            leaderboardPanel.setLayout(new BoxLayout(leaderboardPanel, BoxLayout.Y_AXIS)); // Agar panel dapat dinamis sesuai data
+            leaderboardPanel.setBackground(Color.WHITE);
+    
             int rank = 1;
             while (rs.next()) {
                 String username = rs.getString("username");
                 int score = rs.getInt("score");
-                leaderboardText.append(rank++).append(". ").append(username).append(" - ").append(score).append("<br>");
+    
+                // Panel untuk setiap baris
+                JPanel rowPanel = new JPanel();
+                rowPanel.setLayout(new BorderLayout());
+                rowPanel.setBackground(new Color(255, 243, 232)); // Warna krem
+                rowPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+    
+                // Rank
+                JLabel rankLabel = new JLabel(String.valueOf(rank++));
+                rankLabel.setFont(new Font("Arial", Font.BOLD, 18));
+                rankLabel.setForeground(new Color(0, 153, 0)); // Hijau
+                rankLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    
+                // Nama pengguna
+                JLabel usernameLabel = new JLabel("\t\t\t" + username);
+                usernameLabel.setFont(new Font("Arial", Font.BOLD, 18));
+                usernameLabel.setForeground(Color.BLACK);
+                usernameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    
+                // Skor
+                JLabel scoreLabel = new JLabel(String.valueOf(score));
+                scoreLabel.setFont(new Font("Arial", Font.BOLD, 18));
+                scoreLabel.setForeground(new Color(0, 153, 0)); // Hijau
+                scoreLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+    
+                // Tambahkan komponen ke rowPanel
+                rowPanel.add(rankLabel, BorderLayout.WEST);
+                rowPanel.add(usernameLabel, BorderLayout.CENTER);
+                rowPanel.add(scoreLabel, BorderLayout.EAST);
+    
+                // Tambahkan rowPanel ke leaderboardPanel
+                leaderboardPanel.add(rowPanel);
             }
-            leaderboardText.append("</html>");
-
-            JOptionPane.showMessageDialog(frame, leaderboardText.toString(), "Leaderboard",
-                    JOptionPane.INFORMATION_MESSAGE);
+    
+            // Bungkus leaderboardPanel dengan JScrollPane
+            JScrollPane scrollPane = new JScrollPane(leaderboardPanel);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Hilangkan border di sekitar scroll pane
+    
+            // Tambahkan komponen ke mainPanel
+            mainPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spasi atas
+            mainPanel.add(titleLabel);
+            mainPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spasi antar elemen
+            mainPanel.add(iconLabel);
+            mainPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spasi antar elemen
+            mainPanel.add(scrollPane);
+    
+            // Tambahkan mainPanel ke frame
+            frame.add(mainPanel, BorderLayout.CENTER);
+            frame.revalidate();
+            frame.repaint();
         } catch (SQLException e) {
             e.printStackTrace();
         }
