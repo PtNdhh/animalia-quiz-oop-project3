@@ -51,7 +51,7 @@ public class Main implements TimerListener {
                 super.paintComponent(g);
                 // Draw the background image
                 ImageIcon startBg = new ImageIcon(
-                        new ImageIcon("assets\\startBG.png")
+                        new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\startBG.png")
                                 .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
                 g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
@@ -67,7 +67,7 @@ public class Main implements TimerListener {
         // Start button
         // Start button
         ImageIcon startBt = new ImageIcon(
-                new ImageIcon("assets\\startBT.png")
+                new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\startBT.png")
                         .getImage().getScaledInstance(200, 120, Image.SCALE_SMOOTH));
         JButton startButton_1 = new JButton(startBt);
         startButton_1.setFocusable(false);
@@ -103,13 +103,28 @@ public class Main implements TimerListener {
                 super.paintComponent(g);
                 // Draw the background image for the "Enter your name" panel
                 ImageIcon startBg = new ImageIcon(
-                        new ImageIcon("assets\\BGResult.jpg") // Specify your background image here
+                        new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\BGResult.jpg") // Specify your background image here
                                 .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
                 g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
         };
         startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.Y_AXIS));
         startPanel.setOpaque(false); // Make the panel transparent so the background image shows
+
+        JButton backButton = new JButton("< BACK");
+        backButton.setBackground(new Color(164, 33, 35)); // Attractive color
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backButton.setForeground(Color.WHITE);
+        backButton.setFont(new Font("Arial", Font.BOLD, 14));
+        backButton.setFocusPainted(false);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            frame.remove(startPanel); // Hapus quizPanel
+            initGUI(); // Panggil lagi initGUI untuk menampilkan backgroundPanel
+        }
+        });
 
         JLabel nameLabel = new JLabel("Enter your name:");
         nameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -138,6 +153,8 @@ public class Main implements TimerListener {
 
         // Add components to start panel
         startPanel.add(Box.createVerticalStrut(50)); // Add space on top
+        startPanel.add(backButton);
+        startPanel.add(Box.createVerticalStrut(50)); // Add space
         startPanel.add(nameLabel);
         startPanel.add(Box.createVerticalStrut(20)); // Space between label and text field
         startPanel.add(nameField);
@@ -284,7 +301,7 @@ public class Main implements TimerListener {
         }
         timerThread = new TimerThread(10, this); // 15 seconds for each question
         timerThread.start();
-        playMusic("assets\\song.wav");
+        playMusic("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\song.wav");
 
         frame.revalidate();
         frame.repaint();
@@ -331,7 +348,7 @@ public class Main implements TimerListener {
                 super.paintComponent(g);
                 // Draw the background image
                 ImageIcon startBg = new ImageIcon(
-                        new ImageIcon("assets\\BGResult.jpg")
+                        new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\BGResult.jpg")
                                 .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
                 g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
