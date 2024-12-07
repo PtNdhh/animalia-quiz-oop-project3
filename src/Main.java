@@ -199,7 +199,6 @@ public class Main implements TimerListener {
         questionPanel.add(questionLabel, BorderLayout.NORTH);
 
         JPanel optionsPanel = new JPanel(new GridLayout(2, 2, 10, 10)); // Adjust grid spacing
-        
 
         String[] colors = { "#FF5733", "#FFC300", "#33B5FF", "#28A745" }; // Red, Yellow, Blue, Green
         int colorIndex = 0;
@@ -216,7 +215,7 @@ public class Main implements TimerListener {
             optionLabel.setForeground(Color.BLACK);
 
             optionButton.add(optionLabel);
-            
+
             optionButton.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -228,19 +227,22 @@ public class Main implements TimerListener {
                     if (isCorrect) {
                         score += 15;
                         System.out.println("Correct! Current score: " + score); // Debugging line to check score
-                        JOptionPane.showMessageDialog(optionsPanel, "Kamu Benar!", "Jawaban", JOptionPane.INFORMATION_MESSAGE);
-                    }else{
-                        JOptionPane.showMessageDialog(optionsPanel, "Kamu Salah! Jawaban yang benar: " + question.getAnswer(), "Jawaban", JOptionPane.ERROR_MESSAGE);
+                        questionPanel.setBackground(Color.GREEN); // Set question panel color to green if the answer is
+                                                                  // correct
+                    } else {
+                        System.out.println("Incorrect! Correct answer: " + question.getAnswer());
+                        questionPanel.setBackground(Color.RED); // Set question panel color to red if the answer is
+                                                                // incorrect
                     }
                     timerThread.stopTimer(); // Stop the timer when an answer is selected
                 }
-    
+
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     // Mengubah warna menjadi sedikit lebih terang saat mouse berada di atas panel
                     optionButton.setBackground(originalColor.brighter());
                 }
-    
+
                 @Override
                 public void mouseExited(MouseEvent e) {
                     // Mengembalikan warna panel ke warna semula saat mouse keluar
@@ -253,7 +255,6 @@ public class Main implements TimerListener {
         }
 
         questionPanel.add(optionsPanel, BorderLayout.CENTER);
-
 
         // Panel for timer and progress bar
         JPanel timerPanel = new JPanel(new BorderLayout());
@@ -386,74 +387,75 @@ public class Main implements TimerListener {
             String query = "SELECT username, score FROM leaderboard ORDER BY score DESC LIMIT 10";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
-    
+
             // Bersihkan frame
             frame.getContentPane().removeAll();
-    
+
             // Panel utama
             JPanel mainPanel = new JPanel();
             mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
             mainPanel.setBackground(Color.WHITE);
-    
+
             // Label judul
             JLabel titleLabel = new JLabel("LeaderBoard");
             titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
             titleLabel.setForeground(new Color(0, 153, 0)); // Hijau
             titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    
+
             // Ikon trofi
             JLabel iconLabel = new JLabel(new ImageIcon("assets\\thropy_icon.png")); // Ganti path sesuai lokasi ikon
             iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    
+
             // Panel untuk leaderboard (sebagai konten utama untuk ScrollPane)
             JPanel leaderboardPanel = new JPanel();
-            leaderboardPanel.setLayout(new BoxLayout(leaderboardPanel, BoxLayout.Y_AXIS)); // Agar panel dapat dinamis sesuai data
+            leaderboardPanel.setLayout(new BoxLayout(leaderboardPanel, BoxLayout.Y_AXIS)); // Agar panel dapat dinamis
+                                                                                           // sesuai data
             leaderboardPanel.setBackground(Color.WHITE);
-    
+
             int rank = 1;
             while (rs.next()) {
                 String username = rs.getString("username");
                 int score = rs.getInt("score");
-    
+
                 // Panel untuk setiap baris
                 JPanel rowPanel = new JPanel();
                 rowPanel.setLayout(new BorderLayout());
                 rowPanel.setBackground(new Color(255, 243, 232)); // Warna krem
                 rowPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-    
+
                 // Rank
                 JLabel rankLabel = new JLabel(String.valueOf(rank++));
                 rankLabel.setFont(new Font("Arial", Font.BOLD, 18));
                 rankLabel.setForeground(new Color(0, 153, 0)); // Hijau
                 rankLabel.setHorizontalAlignment(SwingConstants.LEFT);
-    
+
                 // Nama pengguna
                 JLabel usernameLabel = new JLabel("\t\t\t" + username);
                 usernameLabel.setFont(new Font("Arial", Font.BOLD, 18));
                 usernameLabel.setForeground(Color.BLACK);
                 usernameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    
+
                 // Skor
                 JLabel scoreLabel = new JLabel(String.valueOf(score));
                 scoreLabel.setFont(new Font("Arial", Font.BOLD, 18));
                 scoreLabel.setForeground(new Color(0, 153, 0)); // Hijau
                 scoreLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-    
+
                 // Tambahkan komponen ke rowPanel
                 rowPanel.add(rankLabel, BorderLayout.WEST);
                 rowPanel.add(usernameLabel, BorderLayout.CENTER);
                 rowPanel.add(scoreLabel, BorderLayout.EAST);
-    
+
                 // Tambahkan rowPanel ke leaderboardPanel
                 leaderboardPanel.add(rowPanel);
             }
-    
+
             // Bungkus leaderboardPanel dengan JScrollPane
             JScrollPane scrollPane = new JScrollPane(leaderboardPanel);
             scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
             scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
             scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Hilangkan border di sekitar scroll pane
-    
+
             // Tambahkan komponen ke mainPanel
             mainPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spasi atas
             mainPanel.add(titleLabel);
@@ -461,7 +463,7 @@ public class Main implements TimerListener {
             mainPanel.add(iconLabel);
             mainPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spasi antar elemen
             mainPanel.add(scrollPane);
-    
+
             // Tambahkan mainPanel ke frame
             frame.add(mainPanel, BorderLayout.CENTER);
             frame.revalidate();
