@@ -17,14 +17,12 @@ public class QuizManager {
 
     private void loadQuestion() {
         questions = List.of(
-                new Question("What is the capital of France?", "Paris", "Berlin", "Madrid", "Rome", "Paris"),
-                new Question("Which planet is known as the Red Planet?", "Earth", "Mars", "Jupiter", "Venus", "Mars"),
-                new Question("What is the largest ocean on Earth?", "Atlantic", "Indian", "Pacific", "Arctic",
-                        "Pacific"),
-                new Question("Who wrote the play 'Romeo and Juliet'?", "William Shakespeare", "Charles Dickens",
-                        "Jane Austen", "Mark Twain", "William Shakespeare"),
-                new Question("What is the smallest country in the world?", "Vatican City", "Monaco", "Nauru",
-                        "San Marino", "Vatican City"));
+        new Question("Hewan apakah yang terkenal suka menyimpan makanan di pipinya, sehingga pipinya jadi kelihatan lucu?", "Gajah", "Tupai", "Hamster", "Panda", "Hamster"),
+        new Question("Hewan apa yang bekerja siang hari sebagai burung dan malam hari jadi pelawak dengan suara lucunya?", "Burung Hantu", "Burung Kakak Tua", "Burung Kolibri", "Ayam", "Burung Hantu"),
+        new Question("Hewan apakah yang bergerak super lambat, tapi kalau bicara soal tidur, dia adalah juaranya?", "Kura-kura", "Siput", "Sloth", "Koala", "Sloth"),
+        new Question("Ikan apa yang suka tersenyum bahkan ketika sedang dikejar-kejar?", "Hiu", "Duyung", "Ikan Badut", "Lele", "Ikan Badut"),
+        new Question("Hewan apakah yang disebut sebagai Raja Hutan, tapi kalau diajak berenang, langsung mengeluh?", "Harimau", "Singa", "Serigala", "Kucing", "Singa")
+        );
 
     }
 
