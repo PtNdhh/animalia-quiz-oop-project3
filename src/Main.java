@@ -51,7 +51,7 @@ public class Main implements TimerListener {
                 super.paintComponent(g);
                 // Draw the background image
                 ImageIcon startBg = new ImageIcon(
-                        new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\startBG.png")
+                        new ImageIcon("assets\\startBG.png")
                                 .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
                 g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
@@ -67,7 +67,7 @@ public class Main implements TimerListener {
         // Start button
         // Start button
         ImageIcon startBt = new ImageIcon(
-                new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\startBT.png")
+                new ImageIcon("assets\\startBT.png")
                         .getImage().getScaledInstance(200, 120, Image.SCALE_SMOOTH));
         JButton startButton_1 = new JButton(startBt);
         startButton_1.setFocusable(false);
@@ -103,7 +103,7 @@ public class Main implements TimerListener {
                 super.paintComponent(g);
                 // Draw the background image for the "Enter your name" panel
                 ImageIcon startBg = new ImageIcon(
-                        new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\BGResult.jpg") // Specify your background image here
+                        new ImageIcon("assets\\BGResult.jpg") // Specify your background image here
                                 .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
                 g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
@@ -301,7 +301,7 @@ public class Main implements TimerListener {
         }
         timerThread = new TimerThread(10, this); // 15 seconds for each question
         timerThread.start();
-        playMusic("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\song.wav");
+        playMusic("assets\\song.wav");
 
         frame.revalidate();
         frame.repaint();
@@ -348,7 +348,7 @@ public class Main implements TimerListener {
                 super.paintComponent(g);
                 // Draw the background image
                 ImageIcon startBg = new ImageIcon(
-                        new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\BGResult.jpg")
+                        new ImageIcon("assets\\BGResult.jpg")
                                 .getImage().getScaledInstance(1000, 600, Image.SCALE_SMOOTH));
                 g.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
@@ -435,7 +435,7 @@ public class Main implements TimerListener {
             titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             // Ikon trofi
-            JLabel iconLabel = new JLabel(new ImageIcon("C:\\Users\\LENOVO\\Music\\animalquiz\\animalia-quiz-oop-project3\\assets\\thropy_icon.png")); // Ganti path sesuai lokasi ikon
+            JLabel iconLabel = new JLabel(new ImageIcon("assets\\thropy_icon.png")); // Ganti path sesuai lokasi ikon
             iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             // Panel untuk leaderboard (sebagai konten utama untuk ScrollPane)

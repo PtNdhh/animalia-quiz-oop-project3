@@ -34,7 +34,7 @@ public class QuizManager {
                 new Question("Hewan apakah yang memiliki cangkang keras dan bisa hidup di darat maupun air?",
                         "Kura-kura", "Tikus", "Ular", "Ikan", "Kura-kura"),
                 new Question(
-                        "Hewan laut apakah yang dikenal sebagai predator puncak di lautan dan memiliki kemampuan berburu yang sangat canggih?",
+                        "Hewan laut apakah yang dikenal sebagai predator puncak di lautan dan dapat berburu dengan canggih?",
                         "Hiu", "Orca", "Duyung", "Lumba-lumba", "Orca"));
 
     }
